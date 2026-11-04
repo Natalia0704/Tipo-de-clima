@@ -83,6 +83,52 @@ elif temperatura >= 25:
     vasos = "10 Vasos"
 else:
     litros = "2.0 Litros"
-    vasos = "8 Vasos
+    vasos = "8 Vasos"
+
+# Contenedor oscuro con métricas visuales para la hidratación
+st.markdown(
+    f"""
+    <div class='contenedor-oscuro'>
+        <div style='text-align: center;'>
+            <p style='margin: 0; font-size: 16px; opacity: 0.8;'>Temperatura</p>
+            <h1 style='margin: 0; font-size: 40px;'>{temperatura}°C</h1>
+        </div>
+        <div style='text-align: center;'>
+            <p style='margin: 0; font-size: 16px; opacity: 0.8;'>Tu Meta de Agua</p>
+            <h3 style='margin: 0; display: inline-block; margin-right: 20px; font-size: 30px;'>{litros}</h3>
+            <h3 style='margin: 0; display: inline-block; font-size: 30px;'>{vasos}</h3>
+        </div>
+    </div>
+    """, unsafe_allow_html=True
+)
+
+st.write("---") # Línea divisora
+
+
+# ======================================================================
+# 4. SECCIÓN: RECOMENDACIÓN DE OUTFIT (INTERACTIVO)
+# ======================================================================
+st.subheader("👕 Personaliza tu Outfit")
+
+col1, col2 = st.columns(2)
+with col1:
+    genero = st.radio("Selecciona tu género:", ["Mujer", "Hombre"])
+with col2:
+    estilo = st.radio("Elige tu estilo:", ["Deportivo", "Casual", "Formal"])
+
+if st.button("Ver Recomendación"):
+    # Lógica simplificada de ropa basada en la clasificación del clima
+    if "calor" in clasificacion:
+        recomendacion = "Ropa ligera, shorts o prendas de lino/algodón."
+    elif "lluvioso" in clasificacion:
+        recomendacion = "No olvides un impermeable, botas para lluvia y paraguas."
+    elif clasificacion == "frio":
+        recomendacion = "Chamarra o abrigo grueso, suéter, bufanda y guantes."
+    else: 
+        recomendacion = "Pantalón ligero, playera y una chamarra delgada."
+        
+    st.write(f"Para un estilo **{estilo}** de **{genero}** en clima **{clasificacion}**, te recomendamos:")
+    st.info(recomendacion)
+    # st.image("tu_imagen_aqui.jpg") # Descomenta y agrega tu imagen
 
   
