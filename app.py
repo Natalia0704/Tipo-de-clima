@@ -4,36 +4,50 @@ import streamlit as st
 st.set_page_config(layout="wide")
 
 # ======================================================================
-# 1. MENÚ LATERAL (SIDEBAR) PARA CAPTURAR DATOS
+# 1. MENÚ LATERAL (SIDEBAR) - SOLO NÚMEROS
 # ======================================================================
 st.sidebar.markdown("### Ciudad\n**Chihuahua**")
+# El usuario solo mueve estos controles, el sistema hace el resto[cite: 14]
 temperatura = st.sidebar.number_input("Temperatura (°C)", value=29)
 humedad = st.sidebar.number_input("Humedad (%)", value=70)
 llueve = st.sidebar.number_input("Lluvia (mm)", value=0)
-estado_clima = st.sidebar.selectbox("Estado del Clima", ["Soleado", "Lluvioso", "Nublado"])
-
 
 # ======================================================================
-# 2. CEREBRO Y FONDO DINÁMICO (TODO EL FONDO CAMBIA)
+# 2. CEREBRO: CLASIFICACIÓN DEL CLIMA Y FONDO DINÁMICO
 # ======================================================================
 
-# Lógica del if/else para el color de fondo dinámico basado en estado_clima
-if estado_clima == "Soleado":
-    color_hex = "#F9E79F" # Amarillo pastel
-elif estado_clima == "Lluvioso":
-    color_hex = "#AED6F1" # Azul pastel
+# A) Lógica para clasificar el clima (basada en tus reglas)
+if temperatura >= 30:
+    if humedad >= 70:
+        clasificacion = "calor humedo"
+    else:
+        clasificacion = "calor seco"
+elif temperatura >= 15:
+    if llueve > 0:
+        clasificacion = "templado lluvioso"
+    else:
+        clasificacion = "templado"
 else:
-    color_hex = "#E5E7E9" # Gris
+    clasificacion = "frio"
 
-# Inyectamos el CSS para pintar el fondo de toda la app (stApp)
+# B) Lógica para el color de fondo basada en la clasificación[cite: 14]
+if "calor" in clasificacion:
+    color_hex = "#F9E79F" # Amarillo pastel (soleado/caluroso)
+elif "lluvioso" in clasificacion:
+    color_hex = "#AED6F1" # Azul pastel (lluvioso)
+elif clasificacion == "templado":
+    color_hex = "#E5E7E9" # Gris (nublado/agradable)
+else:
+    color_hex = "#D6EAF8" # Azul muy claro (frío)
+
+# Inyectamos el CSS para pintar el fondo de toda la app[cite: 14]
 st.markdown(
     f"""
     <style>
     .stApp {{
         background-color: {color_hex};
-        color: #333333; /* Texto oscuro para que se lea bien en el fondo claro */
+        color: #333333; 
     }}
-    /* Esto es para que el contenedor oscuro de hidratación se mantenga bonito */
     .contenedor-oscuro {{
         background-color: #262730; 
         color: white; 
@@ -48,60 +62,19 @@ st.markdown(
     """, unsafe_allow_html=True
 )
 
-
-# Lógica if/else para clasificar el clima (para las recomendaciones)
-if temperatura >= 30:
-    if humedad >= 70:
-        clasificacion = "calor humedo"
-    else:
-        clasificacion = "calor seco"
-elif temperatura >= 15:
-    if llueve > 0:
-        clasificacion = "templado lluvioso"
-    else:
-        clasificacion = "templado"
-else:
-    clasificacion = "frio"
-
 # Título principal
-st.title(f"🌤️ Clima Mood: Chihuahua ({estado_clima})")
-st.success(f"La clasificación actual es: **{clasificacion}**")
-
-st.write("---") # Línea divisora
-
-# ======================================================================
-# 3. SECCIÓN 1: RECOMENDACIÓN DE OUTFIT (INTERACTIVO)
-# ======================================================================
-st.subheader("👕 Personaliza tu Recomendación")
-
-col1, col2 = st.columns(2)
-with col1:
-    genero = st.radio("Selecciona tu género:", ["Mujer", "Hombre"])
-with col2:
-    estilo = st.radio("Elige tu estilo:", ["Deportivo", "Casual", "Formal"])
-
-if st.button("Ver Recomendación"):
-    # Lógica simplificada de ropa
-    if "calor" in clasificacion:
-        recomendacion = "Ropa ligera, shorts o vestidos cortos."
-    elif "lluvioso" in clasificacion:
-        recomendacion = "No olvides un impermeable o paraguas."
-    else:
-        recomendacion = "Chamarra o abrigo, bufanda y ropa abrigadora."
-        
-    st.write(f"Para un estilo **{estilo}** de **{genero}** en clima **{clasificacion}**, te recomendamos:")
-    st.info(recomendacion)
-    # st.image("tu_imagen_aqui.jpg") # Descomenta cuando tengas la imagen
+st.title("🌤️ Clima Mood: Chihuahua")
+st.success(f"El clima actual es: **{clasificacion.upper()}**")
 
 st.write("---") # Línea divisora
 
 
 # ======================================================================
-# 4. SECCIÓN 2: HIDRATACIÓN ENSEGUIDA
+# 3. SECCIÓN: HIDRATACIÓN (Enseguida, sin botones extra)
 # ======================================================================
 st.subheader("💧 Nivel de Hidratación")
 
-# Lógica if/else para calcular el agua[cite: 14]
+# Lógica if/else para calcular el agua basada en la temperatura[cite: 14]
 if temperatura >= 30:
     litros = "3.0 Litros"
     vasos = "12 Vasos"
@@ -110,26 +83,6 @@ elif temperatura >= 25:
     vasos = "10 Vasos"
 else:
     litros = "2.0 Litros"
-    vasos = "8 Vasos"
-
-# Contenedor oscuro simulando tu diseño visual[cite: 14]
-st.markdown(
-    f"""
-    <div class='contenedor-oscuro'>
-        <div style='text-align: center;'>
-            <p style='margin: 0; font-size: 16px; opacity: 0.8;'>Clima Actual</p>
-            <h1 style='margin: 0; font-size: 40px;'>{temperatura}°C</h1>
-        </div>
-        <div style='text-align: center;'>
-            <p style='margin: 0; font-size: 16px; opacity: 0.8;'>Tu Meta de Agua</p>
-            <h3 style='margin: 0; display: inline-block; margin-right: 20px; font-size: 30px;'>{litros}</h3>
-            <h3 style='margin: 0; display: inline-block; font-size: 30px;'>{vasos}</h3>
-        </div>
-    </div>
-    """, unsafe_allow_html=True
-)
-
-st.write("") # Espacio
-    
+    vasos = "8 Vasos
 
   
